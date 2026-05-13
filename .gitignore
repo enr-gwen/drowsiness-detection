@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 fordTrain.csv
+QUICKSTART.md
+TESTING_CHECKLIST.md
+UPGRADE_NOTES.md
+UPGRADE_SUMMARY.md
+make_blackbox.py
