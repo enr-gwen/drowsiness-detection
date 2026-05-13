@@ -18,7 +18,7 @@ sys.modules['__main__'].WinsorizerTransformer = WinsorizerTransformer
 
 st.set_page_config(
     page_title="Drowsiness Detection",
-    page_icon="🚗",
+    page_icon="car",
     layout="wide",
     initial_sidebar_state="collapsed",
     menu_items={
@@ -324,10 +324,10 @@ if mode == "Demo Otomatis":
     )
     st.markdown("")
 
-    ambil_btn = st.button("🔄 Ambil Sampel Baru", type="primary", use_container_width=False)
+    ambil_btn = st.button("Ambil Sampel Baru", type="primary", use_container_width=False)
 
     try:
-        with st.status("📊 Memuat dataset...", expanded=False) as status:
+        with st.status("Memuat dataset...", expanded=False) as status:
             df = load_dataset()
             # Hanya ambil 24 fitur yang digunakan model final (feature_names dari pkl)
             # Kolom non-fitur: IsAlert, TrialID, ObsNum — sisanya sudah di-handle oleh feature_names
@@ -336,12 +336,12 @@ if mode == "Demo Otomatis":
                 if c in df.columns
             ]
             df_feat = df.drop(columns=drop_cols)[feature_names]
-            status.update(label="✅ Dataset siap!", state="complete", expanded=False)
+            status.update(label="Dataset siap!", state="complete", expanded=False)
 
         if ambil_btn or 'sample_idx' not in st.session_state:
             st.session_state.sample_idx = np.random.randint(0, len(df_feat))
             if ambil_btn:
-                st.toast("✅ Sampel baru berhasil diambil!", icon="✅")
+                st.toast("Sampel baru berhasil diambil!", )
 
         idx    = st.session_state.sample_idx
         sample = df_feat.iloc[[idx]]
@@ -444,11 +444,11 @@ if mode == "Demo Otomatis":
                 st.markdown("---")
                 actual_text = "Alert" if actual == 1 else "Drowsy"
                 if pred == actual:
-                    match_html = '<span class="badge-correct">✓ Prediksi Benar</span>'
+                    match_html = '<span class="badge-correct">Prediksi Benar</span>'
                 elif pred == 0 and actual == 1:
-                    match_html = '<span class="badge-wrong">⚠️ False Positive (Drowsy padahal Alert)</span>'
+                    match_html = '<span class="badge-wrong">False Positive (Drowsy padahal Alert)</span>'
                 else:
-                    match_html = '<span class="badge-wrong">🚨 False Negative (Alert padahal Drowsy)</span>'
+                    match_html = '<span class="badge-wrong">False Negative (Alert padahal Drowsy)</span>'
                 st.markdown(f"**Label Asli Dataset:** `{actual_text}`")
                 st.markdown(
                     f"**Akurasi Sampel:** {match_html}",
@@ -457,7 +457,7 @@ if mode == "Demo Otomatis":
                 
                 # Dialog untuk penjelasan detail
                 if pred != actual:
-                    with st.expander("ℹ️ Mengapa prediksi salah?"):
+                    with st.expander("Mengapa prediksi salah?"):
                         if pred == 0 and actual == 1:
                             st.warning(
                                 "**False Positive**: Model memprediksi Drowsy padahal sebenarnya Alert. "
@@ -485,7 +485,7 @@ if mode == "Demo Otomatis":
             
             csv = result_df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Download Hasil",
+                label="Download Hasil",
                 data=csv,
                 file_name=f"prediction_result_{idx}.csv",
                 mime="text/csv",
@@ -496,7 +496,7 @@ if mode == "Demo Otomatis":
             if 'pred_history' not in st.session_state:
                 st.session_state.pred_history = []
             _actual_disp = ("Alert" if actual == 1 else "Drowsy") if actual is not None else 'N/A'
-            _hasil = '✓' if pred == actual else ('⚠️ FP' if pred == 0 else '🚨 FN')
+            _hasil = 'Benar' if pred == actual else ('FP' if pred == 0 else 'FN')
             _entry = {
                 'Baris': idx,
                 'P(Alert)': f"{proba:.4f}",
@@ -509,12 +509,12 @@ if mode == "Demo Otomatis":
                 st.session_state.pred_history.append(_entry)
             st.session_state.pred_history = st.session_state.pred_history[-10:]
             if len(st.session_state.pred_history) > 1:
-                with st.expander(f"📋 Riwayat Prediksi ({len(st.session_state.pred_history)} entri terakhir)"):
+                with st.expander(f"Riwayat Prediksi ({len(st.session_state.pred_history)} entri terakhir)"):
                     st.dataframe(
                         pd.DataFrame(st.session_state.pred_history[::-1]),
                         use_container_width=True, hide_index=True
                     )
-                    if st.button("🗑️ Hapus Riwayat", key="clear_history"):
+                    if st.button("Hapus Riwayat", key="clear_history"):
                         st.session_state.pred_history = []
                         st.rerun()
 
@@ -551,7 +551,7 @@ elif mode == "Input Manual":
     # Toggle untuk mode input
     input_mode = st.radio(
         "Pilih mode input:",
-        ["🎚️ Slider Input", "📝 Table Editor", "📤 Upload CSV"],
+        ["Slider Input", "Table Editor", "Upload CSV"],
         horizontal=True
     )
     
@@ -559,7 +559,7 @@ elif mode == "Input Manual":
 
     input_data = {}
     
-    if input_mode == "🎚️ Slider Input":
+    if input_mode == "Slider Input":
         c1, c2, c3 = st.columns(3)
 
         with c1:
@@ -581,8 +581,8 @@ elif mode == "Input Manual":
                     feat, value=0.0, format='%.4f', key=feat
                 )
     
-    elif input_mode == "📝 Table Editor":
-        st.info("💡 Edit nilai sensor langsung di tabel di bawah ini")
+    elif input_mode == "Table Editor":
+        st.info("Edit nilai sensor langsung di tabel di bawah ini")
         default_values = {feat: 0.0 for feat in feature_names}
         df_input = pd.DataFrame([default_values])
         edited_df = st.data_editor(
@@ -598,17 +598,17 @@ elif mode == "Input Manual":
         input_data = edited_df.iloc[0].to_dict()
 
     else:  # Upload CSV
-        st.info("💡 Upload file CSV. Pastikan kolom header sama dengan nama fitur model.")
+        st.info("Upload file CSV. Pastikan kolom header sama dengan nama fitur model.")
         uploaded_file = st.file_uploader("Pilih file CSV", type=["csv"], key="csv_upload")
         if uploaded_file is not None:
             try:
                 df_up = pd.read_csv(uploaded_file)
                 missing = [c for c in feature_names if c not in df_up.columns]
                 if missing:
-                    st.error(f"❌ Kolom tidak lengkap. Hilang: {missing}")
+                    st.error(f"Kolom tidak lengkap. Hilang: {missing}")
                     input_data = {feat: 0.0 for feat in feature_names}
                 else:
-                    st.success(f"✅ {len(df_up)} baris ditemukan.")
+                    st.success(f"{len(df_up)} baris ditemukan.")
                     row_sel = st.number_input(
                         "Pilih baris ke-", min_value=0,
                         max_value=len(df_up) - 1, value=0, step=1
@@ -616,7 +616,7 @@ elif mode == "Input Manual":
                     input_data = df_up[feature_names].iloc[int(row_sel)].to_dict()
                     st.dataframe(df_up[feature_names].iloc[[int(row_sel)]], use_container_width=True)
             except Exception as _e:
-                st.error(f"❌ Gagal membaca file: {_e}")
+                st.error(f"Gagal membaca file: {_e}")
                 input_data = {feat: 0.0 for feat in feature_names}
         else:
             st.caption("Belum ada file. Nilai default 0.0 akan digunakan.")
@@ -624,13 +624,13 @@ elif mode == "Input Manual":
 
     st.markdown("---")
 
-    if st.button("🔍 Prediksi", type="primary", use_container_width=True):
+    if st.button("Prediksi", type="primary", use_container_width=True):
         with st.spinner("Memproses data sensor..."):
             X_input = pd.DataFrame([input_data])
             proba   = pipeline.predict_proba(X_input)[0, 1]
             pred    = int(proba >= threshold)
 
-        st.toast("✅ Prediksi selesai!", icon="✅")
+        st.toast("Prediksi selesai!", )
 
         with st.container(border=True):
             if pred == 0:
@@ -696,7 +696,7 @@ elif mode == "Interpretasi Model":
     # Toggle untuk memilih jenis chart
     chart_type = st.radio(
         "Pilih jenis visualisasi:",
-        ["📊 Plotly (Interaktif)", "📈 Matplotlib (Statis)"],
+        ["Plotly (Interaktif)", "Matplotlib (Statis)"],
         horizontal=True
     )
 
@@ -734,7 +734,7 @@ elif mode == "Interpretasi Model":
 
         colors = [get_color(s) for s in fi_df['Sensor']]
 
-        if chart_type == "📊 Plotly (Interaktif)":
+        if chart_type == "Plotly (Interaktif)":
             # Plotly interactive chart
             fig = go.Figure()
             
