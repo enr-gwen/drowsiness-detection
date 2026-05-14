@@ -1,7 +1,6 @@
 .venv/
 __pycache__/
 *.pyc
-fordTrain.csv
 QUICKSTART.md
 TESTING_CHECKLIST.md
 UPGRADE_NOTES.md
